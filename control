@@ -1,0 +1,10 @@
+Package: com.p2kdev.spotbetter
+Name: SpotBetter
+Depends: firmware (>= 13.0),mobilesubstrate,preferenceloader,com.spark.libsparkapplist
+Conflicts: com.imkpatil.spotclearonclose
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Better Spotlight!
+Maintainer: P2KDev <p2kdev@gmail.com>
+Author: P2KDev <p2kdev@gmail.com>
+Section: Tweaks

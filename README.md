@@ -1,0 +1,2 @@
+# SpotBetter
+ Better Spotlight!
