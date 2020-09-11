@@ -62,9 +62,11 @@ static void reloadSettings() {
   NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.p2kdev.spotbetter.plist"];
 
   if(prefs)
+  {
       clearResults = [prefs objectForKey:@"clearResults"] ? [[prefs objectForKey:@"clearResults"] boolValue] : clearResults;
       disableActionCards = [prefs objectForKey:@"disableActionCards"] ? [[prefs objectForKey:@"disableActionCards"] boolValue] : disableActionCards;
   }
+}
 
 %ctor
 {
