@@ -39,7 +39,26 @@ static bool disableActionCards = YES;
 //Pinning Favorite Apps in Spotlight Search
 %hook ATXResponse
 
+  //iOS13
   -(id)initWithPredictions:(NSArray*)arg1 cacheFileData:(id)arg2 error:(id)arg3
+  {
+    NSArray* pinnedApps = [SparkAppList getAppListForIdentifier:@"com.p2kdev.spotbetter" andKey:@"pinnedApps"];
+
+    int counter = 1;
+    for (ATXScoredPrediction* prediction in arg1)
+    {
+      if (pinnedApps.count >= counter)
+        MSHookIvar<NSString*>(prediction,"_predictedItem") = [pinnedApps objectAtIndex:counter-1];
+      else
+        break;
+
+      counter++;
+    }
+    return %orig;
+  }
+
+  //iOS14
+  -(id)initWithPredictions:(id)arg1 proactiveSuggestions:(id)arg2 uuid:(id)arg3 cacheFileData:(id)arg4 blendingUICacheUpdateUUID:(id)arg5 error:(id)arg6
   {
     NSArray* pinnedApps = [SparkAppList getAppListForIdentifier:@"com.p2kdev.spotbetter" andKey:@"pinnedApps"];
 
