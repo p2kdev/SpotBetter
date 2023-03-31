@@ -1,7 +1,8 @@
+export THEOS_PACKAGE_SCHEME=rootless
+export TARGET = iphone:clang:13.7:13.0
 include $(THEOS)/makefiles/common.mk
 
 export ARCHS = arm64 arm64e
-export TARGET = iphone:clang:12.1.2:12.0
 
 BUNDLE_NAME = SpotBetter
 $(BUNDLE_NAME)_FILES = SBetterRootListController.m

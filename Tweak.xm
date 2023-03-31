@@ -78,13 +78,16 @@ static bool disableActionCards = YES;
 
 static void reloadSettings() {
 
-  NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.p2kdev.spotbetter.plist"];
+		static CFStringRef prefsKey = CFSTR("com.p2kdev.simplebattery");
+		CFPreferencesAppSynchronize(prefsKey);
 
-  if(prefs)
-  {
-      clearResults = [prefs objectForKey:@"clearResults"] ? [[prefs objectForKey:@"clearResults"] boolValue] : clearResults;
-      disableActionCards = [prefs objectForKey:@"disableActionCards"] ? [[prefs objectForKey:@"disableActionCards"] boolValue] : disableActionCards;
-  }
+		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearResults", prefsKey))) {
+			clearResults = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearResults", prefsKey)) boolValue];
+		}
+
+		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey))) {
+			disableActionCards = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey)) boolValue];
+		}  
 }
 
 %ctor

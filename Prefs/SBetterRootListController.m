@@ -3,8 +3,6 @@
 #import "SparkAppList.h"
 #import "spawn.h"
 
-#define tweakPrefPath @"/User/Library/Preferences/com.p2kdev.spotbetter.plist"
-
 @interface SBetterRootListController : PSListController
 @end
 
@@ -14,23 +12,6 @@
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
 	}
 	return _specifiers;
-}
-
--(id) readPreferenceValue:(PSSpecifier*)specifier {
-    NSDictionary *tweakSettings = [NSDictionary dictionaryWithContentsOfFile:tweakPrefPath];
-    if (!tweakSettings[specifier.properties[@"key"]]) {
-        return specifier.properties[@"default"];
-    }
-    return tweakSettings[specifier.properties[@"key"]];
-}
-
--(void) setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-    NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
-    [defaults addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:tweakPrefPath]];
-    [defaults setObject:value forKey:specifier.properties[@"key"]];
-    [defaults writeToFile:tweakPrefPath atomically:YES];
-    CFStringRef toPost = (__bridge CFStringRef)specifier.properties[@"PostNotification"];
-    if(toPost) CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), toPost, NULL, NULL, YES);
 }
 
 - (void)selectApps {
