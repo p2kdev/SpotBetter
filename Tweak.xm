@@ -1,5 +1,3 @@
-#import "SparkAppList.h"
-
 @interface SPUISearchViewController : NSObject
   -(void)clearSearchResults;
 @end
@@ -7,6 +5,7 @@
 @interface ATXScoredPrediction
 @end
 
+static NSArray* pinnedApps;
 static bool clearResults = YES;
 static bool disableActionCards = YES;
 
@@ -42,8 +41,6 @@ static bool disableActionCards = YES;
   //iOS13
   -(id)initWithPredictions:(NSArray*)arg1 cacheFileData:(id)arg2 error:(id)arg3
   {
-    NSArray* pinnedApps = [SparkAppList getAppListForIdentifier:@"com.p2kdev.spotbetter" andKey:@"pinnedApps"];
-
     int counter = 1;
     for (ATXScoredPrediction* prediction in arg1)
     {
@@ -60,8 +57,6 @@ static bool disableActionCards = YES;
   //iOS14
   -(id)initWithPredictions:(id)arg1 proactiveSuggestions:(id)arg2 uuid:(id)arg3 cacheFileData:(id)arg4 blendingUICacheUpdateUUID:(id)arg5 error:(id)arg6
   {
-    NSArray* pinnedApps = [SparkAppList getAppListForIdentifier:@"com.p2kdev.spotbetter" andKey:@"pinnedApps"];
-
     int counter = 1;
     for (ATXScoredPrediction* prediction in arg1)
     {
@@ -78,7 +73,7 @@ static bool disableActionCards = YES;
 
 static void reloadSettings() {
 
-		static CFStringRef prefsKey = CFSTR("com.p2kdev.simplebattery");
+		static CFStringRef prefsKey = CFSTR("com.p2kdev.spotbetter");
 		CFPreferencesAppSynchronize(prefsKey);
 
 		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearResults", prefsKey))) {
@@ -88,6 +83,10 @@ static void reloadSettings() {
 		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey))) {
 			disableActionCards = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey)) boolValue];
 		}  
+
+		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"pinnedApps", prefsKey))) {
+			pinnedApps = [[NSArray alloc] initWithArray:(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"pinnedApps", prefsKey))];
+		}   
 }
 
 %ctor
