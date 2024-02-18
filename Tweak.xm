@@ -14,12 +14,17 @@ static bool disableActionCards = YES;
 //Clears Search Results when dismissing
 %hook SPUISearchViewController
 
--(void)searchViewWillDismissWithReason:(unsigned long long)arg1
-{
-  %orig;
-  if (clearResults)
-    [self clearSearchResults];
-}
+  -(void)searchViewWillDismissWithReason:(unsigned long long)arg1
+  {
+    %orig;
+    if (clearResults && [self respondsToSelector:@selector(clearSearchResults:)])
+      [self clearSearchResults];
+  }
+
+  -(BOOL)clearQueryOnDismissal
+  {
+    return clearResults ? YES : %orig;
+  }
 
 %end
 

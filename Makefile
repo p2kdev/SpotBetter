@@ -8,7 +8,7 @@ export ARCHS = arm64 arm64e
 
 TWEAK_NAME = SpotBetter
 SpotBetter_FILES = Tweak.xm
-SpotBetter_EXTRA_FRAMEWORKS = Altlist
+#SpotBetter_EXTRA_FRAMEWORKS = Altlist
 SpotBetter_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk

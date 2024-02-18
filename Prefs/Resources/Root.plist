@@ -44,21 +44,15 @@
 			<dict>
 				<key>cell</key>
 				<string>PSLinkListCell</string>
+				<key>label</key>
+				<string>Select Apps...</string>
 				<key>detail</key>
-				<string>ATLApplicationListMultiSelectionController</string>				
+				<string>SpotBetterAppSelectorController</string>
 				<key>defaults</key>
 				<string>com.p2kdev.spotbetter</string>
 				<key>key</key>
 				<string>pinnedApps</string>
-				<key>label</key>
-				<string>Select Apps...</string>
-				<key>showIdentifiersAsSubtitle</key>
-				<true/>
-				<key>defaultApplicationSwitchValue</key>
-				<false/>
-				<key>useSearchBar</key>
-				<true/>				
-			</dict>
+			</dict>			
 
 			<dict>
 				<key>cell</key>
