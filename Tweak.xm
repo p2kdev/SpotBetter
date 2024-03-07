@@ -40,6 +40,17 @@ static bool disableActionCards = YES;
   }
 %end
 
+%hook ATXActionCriteria
+
+  -(id)initWithStartDate:(id)arg1 endDate:(id)arg2 lockScreenEligible:(id)arg3 predicate:(id)arg4
+  {
+    if (disableActionCards)
+      return nil;
+    else
+      return %orig;
+  }
+%end
+
 //Pinning Favorite Apps in Spotlight Search
 %hook ATXResponse
 
@@ -59,7 +70,7 @@ static bool disableActionCards = YES;
     return %orig;
   }
 
-  //iOS14
+  //iOS14 & up
   -(id)initWithPredictions:(id)arg1 proactiveSuggestions:(id)arg2 uuid:(id)arg3 cacheFileData:(id)arg4 blendingUICacheUpdateUUID:(id)arg5 error:(id)arg6
   {
     int counter = 1;
