@@ -28,11 +28,23 @@
 				<key>defaults</key>
 				<string>com.p2kdev.spotbetter</string>
 				<key>key</key>
+				<string>clearRecentSearches</string>
+				<key>label</key>
+				<string>Hide Recent Searches</string>
+			</dict>				
+
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>default</key>
+				<true/>
+				<key>defaults</key>
+				<string>com.p2kdev.spotbetter</string>
+				<key>key</key>
 				<string>disableActionCards</string>
 				<key>label</key>
-				<string>Disable Action Cards</string>
-			</dict>
-
+				<string>Disable Suggestions</string>
+			</dict>	
 
 			<dict>
 				<key>cell</key>

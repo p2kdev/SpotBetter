@@ -1,15 +1,19 @@
 @interface SPUISearchViewController : NSObject
   -(void)clearSearchResults;
+  -(void)clearSearchResultsAndFetchZKW:(BOOL)arg1;
 @end
 
 @interface ATXScoredPrediction
 @end
 
+@interface SSRecentResultsManager : NSObject
+  +(void)deleteAllRecents;
+@end
+
 static NSArray* pinnedApps;
 static bool clearResults = YES;
 static bool disableActionCards = YES;
-
-
+static bool clearRecentSearches = YES;
 
 //Clears Search Results when dismissing
 %hook SPUISearchViewController
@@ -17,13 +21,17 @@ static bool disableActionCards = YES;
   -(void)searchViewWillDismissWithReason:(unsigned long long)arg1
   {
     %orig;
-    if (clearResults && [self respondsToSelector:@selector(clearSearchResults:)])
-      [self clearSearchResults];
-  }
+    if (clearResults) {
+      if ([self respondsToSelector:@selector(clearSearchResults:)])
+        [self clearSearchResults];
+      else if ([self respondsToSelector:@selector(clearSearchResultsAndFetchZKW:)])
+        [self clearSearchResultsAndFetchZKW:NO];
+    }      
 
-  -(BOOL)clearQueryOnDismissal
-  {
-    return clearResults ? YES : %orig;
+    if (@available(iOS 16, *)) {
+      if (clearRecentSearches)
+        [%c(SSRecentResultsManager) deleteAllRecents];
+    }    
   }
 
 %end
@@ -40,10 +48,18 @@ static bool disableActionCards = YES;
   }
 %end
 
-%hook ATXActionCriteria
+//Removes the Action Suggestions on iOS16+
+%hook ATXProactiveSuggestionClient
 
-  -(id)initWithStartDate:(id)arg1 endDate:(id)arg2 lockScreenEligible:(id)arg3 predicate:(id)arg4
+  -(id)init
   {
+    if (disableActionCards)
+      return nil;
+    else
+      return %orig;
+  }
+    
+  -(id)initWithConsumerSubType:(unsigned char)arg1 {
     if (disableActionCards)
       return nil;
     else
@@ -55,7 +71,7 @@ static bool disableActionCards = YES;
 %hook ATXResponse
 
   //iOS13
-  -(id)initWithPredictions:(NSArray*)arg1 cacheFileData:(id)arg2 error:(id)arg3
+  -(id)initWithPredictions:(id)arg1 cacheFileData:(id)arg2 error:(id)arg3
   {
     int counter = 1;
     for (ATXScoredPrediction* prediction in arg1)
@@ -71,8 +87,7 @@ static bool disableActionCards = YES;
   }
 
   //iOS14 & up
-  -(id)initWithPredictions:(id)arg1 proactiveSuggestions:(id)arg2 uuid:(id)arg3 cacheFileData:(id)arg4 blendingUICacheUpdateUUID:(id)arg5 error:(id)arg6
-  {
+  -(id)initWithPredictions:(id)arg1 proactiveSuggestions:(id)arg2 uuid:(id)arg3 cacheFileData:(id)arg4 blendingUICacheUpdateUUID:(id)arg5 error:(id)arg6 {
     int counter = 1;
     for (ATXScoredPrediction* prediction in arg1)
     {
@@ -83,7 +98,7 @@ static bool disableActionCards = YES;
 
       counter++;
     }
-    return %orig;
+    return %orig(arg1,nil,arg3,arg4,arg5,arg6);
   }
 %end
 
@@ -95,6 +110,10 @@ static void reloadSettings() {
 		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearResults", prefsKey))) {
 			clearResults = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearResults", prefsKey)) boolValue];
 		}
+
+		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearRecentSearches", prefsKey))) {
+			clearRecentSearches = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"clearRecentSearches", prefsKey)) boolValue];
+		}     
 
 		if (CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey))) {
 			disableActionCards = [(id)CFBridgingRelease(CFPreferencesCopyAppValue((CFStringRef)@"disableActionCards", prefsKey)) boolValue];
