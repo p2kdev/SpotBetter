@@ -10,10 +10,14 @@
   +(void)deleteAllRecents;
 @end
 
+@interface SFResultSection
+  @property (nonatomic,copy) NSString * bundleIdentifier;
+@end
+
 static NSArray* pinnedApps;
-static bool clearResults = YES;
-static bool disableActionCards = YES;
-static bool clearRecentSearches = YES;
+static BOOL clearResults = YES;
+static BOOL disableActionCards = YES;
+static BOOL clearRecentSearches = YES;
 
 //Clears Search Results when dismissing
 %hook SPUISearchViewController
@@ -26,12 +30,19 @@ static bool clearRecentSearches = YES;
         [self clearSearchResults];
       else if ([self respondsToSelector:@selector(clearSearchResultsAndFetchZKW:)])
         [self clearSearchResultsAndFetchZKW:NO];
-    }      
+    }       
+  }
 
-    if (@available(iOS 16, *)) {
-      if (clearRecentSearches)
-        [%c(SSRecentResultsManager) deleteAllRecents];
-    }    
+%end
+
+//Clear Recent Searches
+%hook SFResultSection
+
+  -(void)setResults:(NSArray*)results {
+    if ([self.bundleIdentifier isEqualToString:@"com.apple.spotlight.dec.zkw.recents"] && clearRecentSearches)
+      results = nil;
+
+    %orig;
   }
 
 %end
@@ -100,6 +111,7 @@ static bool clearRecentSearches = YES;
     }
     return %orig(arg1,nil,arg3,arg4,arg5,arg6);
   }
+
 %end
 
 static void reloadSettings() {
